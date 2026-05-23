@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>星空轨道 · 1.16.5 模组服 | 官网</title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: #0a0f18;
+      font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+    }
+    #starsCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .mod-card {
+      transition: all 0.25s ease;
+      backdrop-filter: blur(4px);
+      background: rgba(10, 20, 30, 0.75);
+      border: 1px solid rgba(100, 200, 150, 0.25);
+      z-index: 1;
+    }
+    .mod-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(80, 220, 120, 0.7);
+      box-shadow: 0 20px 30px -15px rgba(0, 200, 100, 0.35);
+      background: rgba(15, 30, 40, 0.85);
+    }
+    .btn-download {
+      background: linear-gradient(120deg, #2d5a3b, #1e3b28);
+      border: 1px solid #4ade80;
+      transition: 0.2s;
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.3);
+    }
+    .btn-download:hover {
+      background: linear-gradient(120deg, #3b6e4a, #2b4d34);
+      border-color: #86efac;
+      box-shadow: 0 0 20px #4ade80aa;
+      transform: scale(1.02);
+    }
+    .text-glow {
+      background: linear-gradient(to right, #b9f5d8, #6ee7b7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .content-layer {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body class="text-gray-100 min-h-screen flex flex-col items-center justify-start px-4 py-8 md:py-12">
+
+  <canvas id="starsCanvas"></canvas>
+
+  <div class="w-full max-w-5xl mx-auto content-layer">
+
+    <!-- 头部 -->
+    <header class="text-center mb-10 md:mb-14">
+      <div class="inline-flex items-center justify-center gap-3 mb-3">
+        <i class="fas fa-cube text-4xl md:text-5xl text-emerald-400 drop-shadow-lg"></i>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
+          <span class="text-glow">星空轨道</span>
+        </h1>
+      </div>
+      <p class="text-emerald-200/80 text-lg md:text-xl font-light tracking-wide max-w-xl mx-auto">
+        Minecraft <span class="font-semibold text-white">1.16.5</span> 模组服 · 优雅探索 · 轻松建造
+      </p>
+
+      <!-- 多IP展示区域 -->
+      <div class="mt-5 bg-black/50 backdrop-blur-md px-6 py-4 rounded-2xl border border-emerald-700/60 shadow-lg max-w-lg mx-auto text-left">
+        <div class="flex items-center gap-2 mb-2">
+          <i class="fas fa-network-wired text-emerald-300 text-lg"></i>
+          <span class="text-emerald-100 font-semibold">服务器IP地址</span>
+        </div>
+        <p class="text-xs text-gray-300 mb-3 leading-relaxed">
+          ⚠️ 因为服务器只在其中一个IP开启，所以建议把所有IP都添加一下，并且服务器经常更换IP(看内网穿透情况)
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2 border border-white/10">
+            <div>
+              <div class="text-xs text-gray-400">圣何塞</div>
+              <code class="text-white text-sm font-mono">sj.frp.one:33818</code>
+            </div>
+            <button onclick="copySingleIP('sj.frp.one:33818')" class="text-emerald-300 hover:text-white transition" title="复制IP">
+              <i class="far fa-copy"></i>
+            </button>
+          </div>
+          <div class="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2 border border-white/10">
+            <div>
+              <div class="text-xs text-gray-400">中国香港-5</div>
+              <code class="text-white text-sm font-mono">xg-5.frp.one:53089</code>
+            </div>
+            <button onclick="copySingleIP('xg-5.frp.one:53089')" class="text-emerald-300 hover:text-white transition" title="复制IP">
+              <i class="far fa-copy"></i>
+            </button>
+          </div>
+          <div class="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2 border border-white/10">
+            <div>
+              <div class="text-xs text-gray-400">湖北武汉多线</div>
+              <code class="text-white text-sm font-mono">wh.frp.one:8505</code>
+            </div>
+            <button onclick="copySingleIP('wh.frp.one:8505')" class="text-emerald-300 hover:text-white transition" title="复制IP">
+              <i class="far fa-copy"></i>
+            </button>
+          </div>
+          <div class="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2 border border-white/10">
+            <div>
+              <div class="text-xs text-gray-400">立陶宛维尔纽斯</div>
+              <code class="text-white text-sm font-mono">ltw.frp.one:59894</code>
+            </div>
+            <button onclick="copySingleIP('ltw.frp.one:59894')" class="text-emerald-300 hover:text-white transition" title="复制IP">
+              <i class="far fa-copy"></i>
+            </button>
+          </div>
+        </div>
+        <div id="copyToast" class="text-xs text-emerald-200 mt-2 opacity-0 transition-opacity duration-300 text-center">✅ IP地址已复制</div>
+      </div>
+    </header>
+
+    <!-- 服务器特色 -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12 text-center">
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+        <i class="fas fa-train text-3xl text-cyan-300 mb-2"></i>
+        <h3 class="font-bold text-lg text-white">全自动铁路</h3>
+        <p class="text-gray-300 text-sm">MTR 模组带来港铁风格列车与月台屏蔽门</p>
+      </div>
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+        <i class="fas fa-hammer text-3xl text-amber-300 mb-2"></i>
+        <h3 class="font-bold text-lg text-white">轻松建造</h3>
+        <p class="text-gray-300 text-sm">镜像/阵列/快速替换，建筑党狂喜</p>
+      </div>
+      <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
+        <i class="fas fa-gem text-3xl text-pink-300 mb-2"></i>
+        <h3 class="font-bold text-lg text-white">极致优化</h3>
+        <p class="text-gray-300 text-sm">Ixeris 多线程优化，告别鼠标卡顿</p>
+      </div>
+    </div>
+
+    <!-- 模组列表 -->
+    <h2 class="text-3xl font-bold text-white mb-7 flex items-center gap-3">
+      <i class="fas fa-puzzle-piece text-emerald-400"></i> 服务器模组列表
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="modGrid">
+      <!-- 由JS动态生成 -->
+    </div>
+
+    <!-- 下载整合包 (新链接) -->
+    <div class="mt-14 bg-emerald-900/40 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-emerald-500/50 shadow-2xl text-center">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-5">
+        <div class="text-left">
+          <h3 class="text-2xl md:text-3xl font-bold text-white flex items-center gap-2">
+            <i class="fas fa-cloud-download-alt text-emerald-300"></i> 客户端模组包
+          </h3>
+          <p class="text-emerald-100/80 mt-1 text-sm md:text-base">包含上述所有模组，下载后解压即玩。需安装 Java 8 与 Minecraft Forge 1.16.5</p>
+        </div>
+        <a href="https://wwaor.lanzout.com/iCKb73pg53ng" target="_blank" rel="noopener noreferrer"
+           class="btn-download inline-flex items-center gap-2 text-white font-bold py-3 px-8 rounded-full text-lg shadow-xl transition">
+          <i class="fas fa-download"></i> 下载模组包(80.6M)
+        </a>
+      </div>
+      <div class="mt-4 text-sm text-gray-300 flex flex-wrap items-center justify-center gap-4">
+        <span class="bg-black/40 px-3 py-1 rounded-full flex items-center gap-2">
+          <i class="fas fa-key text-yellow-400"></i> 提取密码：<code class="text-yellow-300 font-bold">Mod</code>
+        </span>
+        <span class="bg-black/40 px-3 py-1 rounded-full flex items-center gap-2">
+          <i class="fab fa-java text-orange-400"></i> 需要 Java 8 + Forge 36.0.46+
+        </span>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="mt-12 text-center text-gray-400 text-xs border-t border-white/10 pt-6">
+      <p>© 2026 星空轨道 Minecraft 服务器 · 本网站仅用于模组展示与下载</p>
+      <p class="mt-1">Minecraft 版权归 Mojang AB 所有。模组版权归各自作者所有。</p>
+    </footer>
+  </div>
+
+  <script>
+    (function() {
+      // 模组数据
+      const mods = [
+        { name: "JEI物品管理器", icon: "fa-magnifying-glass", color: "text-amber-300", desc: "查看物品合成配方，按R键查询合成，按U键查询用途。", category: "基础" },
+        { name: "MTR 我的世界铁路", icon: "fa-train-subway", color: "text-cyan-300", desc: "添加列车、月台屏蔽门、自动扶梯，建造全自动铁路系统。", category: "交通" },
+        { name: "Architectury API", icon: "fa-code", color: "text-purple-300", desc: "跨平台API库，为模组提供Forge/Fabric兼容层。", category: "前置" },
+        { name: "Chat Heads", icon: "fa-comment-dots", color: "text-sky-300", desc: "聊天消息旁显示玩家头像，一眼认出谁在说话。", category: "社交" },
+        { name: "Cloth Config", icon: "fa-sliders", color: "text-indigo-300", desc: "统一的模组配置界面库，让参数调整更直观。", category: "前置" },
+        { name: "Effortless Building", icon: "fa-cubes", color: "text-orange-300", desc: "镜像、阵列、快速替换，按住Alt开启建筑菜单。", category: "建造" },
+        { name: "ForceAccessServer", icon: "fa-unlock-alt", color: "text-red-300", desc: "修复离线模式多人游戏按钮被禁用的问题。", category: "修复" },
+        { name: "FTB Library", icon: "fa-book", color: "text-lime-300", desc: "FTB系列模组的前置库，提供UI与配置支持。", category: "前置" },
+        { name: "FTB Ultimine", icon: "fa-burst", color: "text-yellow-300", desc: "连锁挖掘，按住~键可切换形状批量破坏方块。", category: "工具" },
+        { name: "Ixeris", icon: "fa-gauge-high", color: "text-green-300", desc: "多线程事件轮询，大幅改善鼠标移动时的掉帧问题。", category: "优化" },
+        { name: "ToroHealth", icon: "fa-heart-pulse", color: "text-pink-300", desc: "显示生物血条与伤害跳字，支持RPG风格血条。", category: "界面" }
+      ];
+
+      const grid = document.getElementById('modGrid');
+      if (grid) {
+        grid.innerHTML = mods.map(mod => `
+          <div class="mod-card rounded-2xl p-5 flex flex-col gap-2 shadow-lg">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                <i class="fas ${mod.icon} ${mod.color} text-xl"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-white text-lg leading-tight">${mod.name}</h4>
+                <span class="text-xs bg-emerald-900/60 px-2 py-0.5 rounded-full text-emerald-200">${mod.category}</span>
+              </div>
+            </div>
+            <p class="text-gray-300 text-sm mt-1 leading-relaxed">${mod.desc}</p>
+          </div>
+        `).join('');
+      }
+
+      // 复制单个IP功能
+      window.copySingleIP = function(ip) {
+        navigator.clipboard.writeText(ip).then(() => {
+          const toast = document.getElementById('copyToast');
+          if (toast) {
+            toast.classList.add('opacity-100');
+            toast.classList.remove('opacity-0');
+            setTimeout(() => {
+              toast.classList.add('opacity-0');
+              toast.classList.remove('opacity-100');
+            }, 1800);
+          }
+        }).catch(() => {
+          alert("手动复制IP: " + ip);
+        });
+      };
+
+      // 动态星空背景
+      const canvas = document.getElementById('starsCanvas');
+      const ctx = canvas.getContext('2d');
+      let width, height;
+      let stars = [];
+
+      function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      class Star {
+        constructor() {
+          this.reset();
+        }
+        reset() {
+          this.x = Math.random() * width;
+          this.y = Math.random() * height;
+          this.radius = Math.random() * 2.2 + 0.5;
+          this.twinkleSpeed = Math.random() * 0.02 + 0.005;
+          this.alpha = Math.random();
+          this.alphaDirection = 1;
+        }
+        update() {
+          this.alpha += this.alphaDirection * this.twinkleSpeed;
+          if (this.alpha > 1.0) {
+            this.alpha = 1.0;
+            this.alphaDirection = -1;
+          } else if (this.alpha < 0.1) {
+            this.alpha = 0.1;
+            this.alphaDirection = 1;
+          }
+        }
+        draw(ctx) {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+          ctx.fill();
+          if (this.radius > 1.8) {
+            ctx.shadowColor = 'white';
+            ctx.shadowBlur = 4;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+      }
+
+      function createStars(count) {
+        stars = [];
+        for (let i = 0; i < count; i++) {
+          stars.push(new Star());
+        }
+      }
+
+      function drawStars() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = 'rgba(5, 10, 20, 0.2)';
+        ctx.fillRect(0, 0, width, height);
+        stars.forEach(star => {
+          star.update();
+          star.draw(ctx);
+        });
+      }
+
+      function animate() {
+        drawStars();
+        requestAnimationFrame(animate);
+      }
+
+      resizeCanvas();
+      createStars(250);
+      animate();
+
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        createStars(250);
+      });
+    })();
+  </script>
+</body>
+</html>
